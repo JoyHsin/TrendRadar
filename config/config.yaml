@@ -13,7 +13,7 @@ app:
   #   - America/New_York (美东时间 UTC-5/-4)
   #   - Europe/London (伦敦时间 UTC+0/+1)
   # 完整时区列表: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  timezone: "Asia/Shanghai"
+  timezone: "America/New_York"        # 美东时间（美股交易时区）
   show_version_update: true           # 显示版本更新提示
 
 
@@ -22,30 +22,29 @@ app:
 #
 # id: 平台唯一标识（勿修改）
 # name: 显示名称（可自定义，修改后不影响运行）
+#
+# 🎯 美股 & 加密货币交易者专用配置
 # ===============================================================
 platforms:
-  - id: "toutiao"
-    name: "今日头条"
-  - id: "baidu"
-    name: "百度热搜"
+  # 财经专业平台（核心数据源）
   - id: "wallstreetcn-hot"
-    name: "华尔街见闻"
-  - id: "thepaper"
-    name: "澎湃新闻"
-  - id: "bilibili-hot-search"
-    name: "bilibili 热搜"
+    name: "华尔街见闻"          # 实时全球财经资讯
   - id: "cls-hot"
-    name: "财联社热门"
-  - id: "ifeng"
-    name: "凤凰网"
-  - id: "tieba"
-    name: "贴吧"
+    name: "财联社热门"          # 中国财经快讯
+
+  # 综合资讯（市场情绪参考）
+  - id: "baidu"
+    name: "百度热搜"            # 中文互联网热点风向
   - id: "weibo"
-    name: "微博"
-  - id: "douyin"
-    name: "抖音"
+    name: "微博"                # 社交媒体情绪指标
   - id: "zhihu"
-    name: "知乎"
+    name: "知乎"                # 深度讨论和分析
+
+  # 可选：科技与创新（影响科技股）
+  # - id: "toutiao"
+  #   name: "今日头条"
+  # - id: "bilibili-hot-search"
+  #   name: "bilibili 热搜"
 
 
 # ===============================================================
@@ -55,6 +54,8 @@ platforms:
 # 每个源配置：id(唯一标识)、name(显示名称)、url(订阅地址)
 # enabled: 可选，默认 true
 # max_age_days: 可选，覆盖全局 freshness_filter.max_age_days
+#
+# 🎯 美股 & 加密货币交易者专用 RSS 源
 # ===============================================================
 rss:
   enabled: true                       # 是否启用 RSS 抓取
@@ -71,31 +72,120 @@ rss:
   #    - 只有新鲜的文章会被推送到通知渠道
   freshness_filter:
     enabled: true                     # 是否启用新鲜度过滤（默认启用）
-    max_age_days: 3                   # 最大文章年龄（天）
-                                      # - 正整数：只推送 N 天内的文章
-                                      # - 0：禁用过滤，推送所有文章
+    max_age_days: 1                   # 交易者模式：只推送 1 天内的文章（时效性要求高）
 
-  # 单个 feed 可配置 max_age_days 覆盖全局设置：
-  # - 不配置：使用全局 freshness_filter.max_age_days（默认 3 天）
-  # - 正整数：覆盖全局设置，只推送此天数内的文章
-  # - 0：禁用此频道的新鲜度过滤，推送所有文章
   feeds:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 📈 美股市场资讯
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    # 综合财经媒体
+    - id: "bloomberg"
+      name: "Bloomberg Markets"
+      url: "https://feeds.bloomberg.com/markets/news.rss"
+      max_age_days: 1
+
+    - id: "reuters-business"
+      name: "Reuters Business"
+      url: "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best"
+      max_age_days: 1
+
+    - id: "cnbc"
+      name: "CNBC Top News"
+      url: "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+      max_age_days: 1
+
+    - id: "marketwatch"
+      name: "MarketWatch"
+      url: "https://feeds.content.dowjones.io/public/rss/mw_topstories"
+      max_age_days: 1
+
+    - id: "wsj"
+      name: "Wall Street Journal"
+      url: "https://feeds.a.dj.com/rss/RSSMarketsMain.xml"
+      max_age_days: 1
+
+    # 科技股重点关注
+    - id: "techcrunch"
+      name: "TechCrunch"
+      url: "https://techcrunch.com/feed/"
+      max_age_days: 1
+
+    - id: "theverge"
+      name: "The Verge"
+      url: "https://www.theverge.com/rss/index.xml"
+      max_age_days: 1
+
     - id: "hacker-news"
       name: "Hacker News"
       url: "https://hnrss.org/frontpage"
-      # max_age_days: 1               # 示例：只推送1天内的文章
+      max_age_days: 1
 
-    - id: "ruanyifeng"
-      name: "阮一峰的网络日志"
-      url: "http://www.ruanyifeng.com/blog/atom.xml"
-      # max_age_days: 7               # 示例：推送7天内的文章（更新较慢的博客）
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🪙 加密货币资讯
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    # 自定义源示例
-    # - id: "custom-feed"
-    #   name: "自定义源"
-    #   url: "https://example.com/feed.xml"
-    #   enabled: false
-    #   max_age_days: 0               # 示例：禁用过滤，推送所有文章
+    - id: "coindesk"
+      name: "CoinDesk"
+      url: "https://www.coindesk.com/arc/outboundfeeds/rss/"
+      max_age_days: 1
+
+    - id: "cointelegraph"
+      name: "Cointelegraph"
+      url: "https://cointelegraph.com/rss"
+      max_age_days: 1
+
+    - id: "decrypt"
+      name: "Decrypt"
+      url: "https://decrypt.co/feed"
+      max_age_days: 1
+
+    - id: "theblock"
+      name: "The Block"
+      url: "https://www.theblock.co/rss.xml"
+      max_age_days: 1
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🌐 宏观经济与政策
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    - id: "fed-news"
+      name: "Federal Reserve News"
+      url: "https://www.federalreserve.gov/feeds/press_all.xml"
+      max_age_days: 1
+
+    - id: "sec-news"
+      name: "SEC Press Releases"
+      url: "https://www.sec.gov/news/pressreleases.rss"
+      max_age_days: 1
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 📊 分析与研究
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    - id: "seeking-alpha"
+      name: "Seeking Alpha Market News"
+      url: "https://seekingalpha.com/market_currents.xml"
+      max_age_days: 1
+
+    - id: "zerohedge"
+      name: "Zero Hedge"
+      url: "https://feeds.feedburner.com/zerohedge/feed"
+      max_age_days: 1
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🇨🇳 中文财经资讯（中概股关注）
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    - id: "wallstreetcn"
+      name: "华尔街见闻"
+      url: "https://rsshub.app/wallstreetcn/news/global"
+      max_age_days: 1
+
+    - id: "36kr"
+      name: "36氪"
+      url: "https://rsshub.app/36kr/news/latest"
+      max_age_days: 1
 
 
 # ===============================================================
@@ -111,17 +201,17 @@ rss:
 #    • 显示内容：当前榜单匹配新闻 + 新增新闻区域
 #    • 适用场景：实时热点追踪、了解当前最火的内容
 #
-# 🔸 incremental（增量监控模式）
+# 🔸 incremental（增量监控模式）⭐ 推荐交易者使用
 #    • 推送时机：有新增才推送
 #    • 显示内容：新出现的匹配频率词新闻
-#    • 适用场景：避免重复信息干扰
+#    • 适用场景：避免重复信息干扰，专注新增市场动态
 # ===============================================================
 report:
-  mode: "current"                     # 可选: daily | current | incremental
-  rank_threshold: 5                   # 排名高亮阈值
-  sort_by_position_first: false       # true=按配置位置排序，false=按热点条数排序
-  max_news_per_keyword: 0             # 每个关键词最大显示数量（0=不限制）
-  reverse_content_order: false        # false=热点词汇统计在前，true=新增热点新闻在前
+  mode: "incremental"                 # 交易者推荐：incremental（只推送新增）
+  rank_threshold: 10                  # 排名高亮阈值（Top 10 高亮显示）
+  sort_by_position_first: false       # false=按热点条数排序（热度优先）
+  max_news_per_keyword: 5             # 每个关键词最多显示 5 条（避免信息过载）
+  reverse_content_order: false        # false=热点词汇统计在前
 
 
 # ===============================================================
