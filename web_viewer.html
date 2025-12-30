@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendRadar - 美股加密货币实时监控</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .info-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f4ff;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-group select {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .card-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .news-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-item:hover {
+            background: #f8f9ff;
+            margin: 0 -12px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .news-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .news-title a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .news-title a:hover {
+            color: #667eea;
+        }
+
+        .news-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #999;
+            align-items: center;
+        }
+
+        .news-source {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .news-rank {
+            background: #ffd700;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .news-rank.top5 {
+            background: #ff4757;
+            color: white;
+        }
+
+        .news-rank.top10 {
+            background: #ffa502;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(255, 71, 87, 0.95);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 TrendRadar - 美股加密货币实时监控</h1>
+            <div class="header-info">
+                <div class="info-item">
+                    <span>🕐 最后更新:</span>
+                    <span class="info-badge" id="lastUpdate">加载中...</span>
+                </div>
+                <div class="info-item">
+                    <span>📰 数据源:</span>
+                    <span class="info-badge" id="sourceCount">0</span>
+                </div>
+                <div class="info-item">
+                    <span>🔥 热点数:</span>
+                    <span class="info-badge" id="newsCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="loadData()">🔄 刷新数据</button>
+            <button class="btn btn-secondary" onclick="openConfig()">⚙️ 配置</button>
+            <div class="filter-group">
+                <label>数据类型:</label>
+                <select id="dataType" onchange="filterData()">
+                    <option value="all">全部</option>
+                    <option value="news">热榜新闻</option>
+                    <option value="rss">RSS 订阅</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>日期:</label>
+                <select id="dateFilter" onchange="loadData()">
+                    <option value="today">今天</option>
+                    <option value="yesterday">昨天</option>
+                    <option value="week">最近7天</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div id="content">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <div>正在加载数据...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置
+        const CONFIG = {
+            apiUrl: 'http://localhost:8080/api',
+            timezone: 'America/New_York',
+            useMockData: false  // 设置为 true 使用模拟数据，false 使用真实 API
+        };
+
+        // 获取当前日期（美东时间）
+        function getCurrentDate() {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('en-CA', {
+                timeZone: CONFIG.timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            return formatter.format(now);
+        }
+
+        // 格式化时间
+        function formatTime(dateStr) {
+            if (!dateStr) return '未知';
+            const date = new Date(dateStr);
+            return new Intl.DateTimeFormat('zh-CN', {
+                timeZone: CONFIG.timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+
+        // 加载数据
+        async function loadData() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>正在加载数据...</div>
+                </div>
+            `;
+
+            try {
+                const dateFilter = document.getElementById('dateFilter').value;
+                const date = getDateByFilter(dateFilter);
+
+                // 模拟数据加载（实际应该从 SQLite 数据库读取）
+                const data = await loadFromDatabase(date);
+
+                if (!data || (data.news.length === 0 && data.rss.length === 0)) {
+                    content.innerHTML = `
+                        <div class="card">
+                            <div class="empty">
+                                📭 暂无数据<br>
+                                <small style="color: #999; margin-top: 10px; display: block;">
+                                    请先运行 TrendRadar 抓取数据，或检查 output 目录
+                                </small>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                renderData(data);
+                updateStats(data);
+                updateHeader(data);
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="error">
+                        ❌ 加载失败: ${error.message}<br>
+                        <small style="margin-top: 10px; display: block;">
+                            请确保已运行 TrendRadar 并生成了数据文件
+                        </small>
+                    </div>
+                `;
+            }
+        }
+
+        // 根据过滤器获取日期
+        function getDateByFilter(filter) {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('en-CA', {
+                timeZone: CONFIG.timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+
+            switch(filter) {
+                case 'yesterday':
+                    now.setDate(now.getDate() - 1);
+                    break;
+                case 'week':
+                    // 返回最近7天的日期数组
+                    const dates = [];
+                    for (let i = 0; i < 7; i++) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        dates.push(formatter.format(d));
+                    }
+                    return dates;
+                default:
+                    break;
+            }
+            return formatter.format(now);
+        }
+
+        // 从数据库加载数据
+        async function loadFromDatabase(date) {
+            // 如果使用模拟数据
+            if (CONFIG.useMockData) {
+                return {
+                    news: generateMockNews(),
+                    rss: generateMockRSS(),
+                    date: Array.isArray(date) ? date[0] : date,
+                    updateTime: new Date().toISOString()
+                };
+            }
+
+            // 从 API 服务器加载真实数据
+            try {
+                const dateStr = Array.isArray(date) ? date[0] : date;
+                const response = await fetch(`${CONFIG.apiUrl}/all?date=${dateStr}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || '加载数据失败');
+                }
+
+                return result;
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                throw new Error(`无法连接到 API 服务器: ${error.message}`);
+            }
+        }
+
+        // 生成模拟新闻数据
+        function generateMockNews() {
+            const sources = ['华尔街见闻', '财联社', '百度热搜', '微博', '知乎'];
+            const keywords = ['英伟达', '特斯拉', '比特币', '美联储', 'OpenAI', '苹果', '微软'];
+            const news = [];
+
+            for (let i = 0; i < 20; i++) {
+                news.push({
+                    title: `${keywords[Math.floor(Math.random() * keywords.length)]} ${['突破新高', '大跌', '发布新品', '财报超预期', '监管政策'][Math.floor(Math.random() * 5)]}`,
+                    source: sources[Math.floor(Math.random() * sources.length)],
+                    rank: Math.floor(Math.random() * 50) + 1,
+                    url: '#',
+                    time: new Date(Date.now() - Math.random() * 3600000).toISOString()
+                });
+            }
+
+            return news.sort((a, b) => a.rank - b.rank);
+        }
+
+        // 生成模拟 RSS 数据
+        function generateMockRSS() {
+            const sources = ['Bloomberg', 'Reuters', 'CNBC', 'CoinDesk', 'TechCrunch'];
+            const rss = [];
+
+            for (let i = 0; i < 15; i++) {
+                rss.push({
+                    title: `${['Market Update', 'Breaking News', 'Analysis', 'Report'][Math.floor(Math.random() * 4)]}: ${['Tech stocks rally', 'Bitcoin surges', 'Fed decision', 'Earnings beat'][Math.floor(Math.random() * 4)]}`,
+                    source: sources[Math.floor(Math.random() * sources.length)],
+                    url: '#',
+                    time: new Date(Date.now() - Math.random() * 7200000).toISOString(),
+                    summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...'
+                });
+            }
+
+            return rss.sort((a, b) => new Date(b.time) - new Date(a.time));
+        }
+
+        // 渲染数据
+        function renderData(data) {
+            const content = document.getElementById('content');
+            const dataType = document.getElementById('dataType').value;
+
+            let html = '<div class="content-grid">';
+
+            // 渲染热榜新闻
+            if (dataType === 'all' || dataType === 'news') {
+                html += renderNewsSection(data.news);
+            }
+
+            // 渲染 RSS
+            if (dataType === 'all' || dataType === 'rss') {
+                html += renderRSSSection(data.rss);
+            }
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        // 渲染新闻板块
+        function renderNewsSection(news) {
+            if (!news || news.length === 0) return '';
+
+            let html = '<div class="card"><div class="card-header">';
+            html += '<div class="card-title">🔥 热榜新闻</div>';
+            html += `<div class="card-badge">${news.length} 条</div>`;
+            html += '</div>';
+
+            news.forEach(item => {
+                const rankClass = item.rank <= 5 ? 'top5' : (item.rank <= 10 ? 'top10' : '');
+                html += `
+                    <div class="news-item">
+                        <div class="news-title">
+                            <a href="${item.url}" target="_blank">${item.title}</a>
+                        </div>
+                        <div class="news-meta">
+                            <span class="news-rank ${rankClass}">TOP ${item.rank}</span>
+                            <span class="news-source">${item.source}</span>
+                            <span>${formatTime(item.time)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        // 渲染 RSS 板块
+        function renderRSSSection(rss) {
+            if (!rss || rss.length === 0) return '';
+
+            let html = '<div class="card"><div class="card-header">';
+            html += '<div class="card-title">📰 RSS 订阅</div>';
+            html += `<div class="card-badge">${rss.length} 条</div>`;
+            html += '</div>';
+
+            rss.forEach(item => {
+                html += `
+                    <div class="news-item">
+                        <div class="news-title">
+                            <a href="${item.url}" target="_blank">${item.title}</a>
+                        </div>
+                        <div class="news-meta">
+                            <span class="news-source">${item.source}</span>
+                            <span>${formatTime(item.time)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        // 更新统计信息
+        function updateStats(data) {
+            const stats = document.getElementById('stats');
+            const newsCount = data.news.length;
+            const rssCount = data.rss.length;
+            const sources = new Set([...data.news.map(n => n.source), ...data.rss.map(r => r.source)]);
+
+            stats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${newsCount}</div>
+                    <div class="stat-label">热榜新闻</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${rssCount}</div>
+                    <div class="stat-label">RSS 订阅</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${sources.size}</div>
+                    <div class="stat-label">数据源</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${newsCount + rssCount}</div>
+                    <div class="stat-label">总计</div>
+                </div>
+            `;
+        }
+
+        // 更新头部信息
+        function updateHeader(data) {
+            document.getElementById('lastUpdate').textContent = formatTime(data.updateTime);
+            const sources = new Set([...data.news.map(n => n.source), ...data.rss.map(r => r.source)]);
+            document.getElementById('sourceCount').textContent = sources.size;
+            document.getElementById('newsCount').textContent = data.news.length + data.rss.length;
+        }
+
+        // 过滤数据
+        function filterData() {
+            loadData();
+        }
+
+        // 打开配置
+        function openConfig() {
+            alert('配置功能开发中...\n\n当前配置:\n- 时区: ' + CONFIG.timezone + '\n- 输出目录: ' + CONFIG.outputDir);
+        }
+
+        // 页面加载时自动加载数据
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            // 每5分钟自动刷新
+            setInterval(loadData, 5 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>
