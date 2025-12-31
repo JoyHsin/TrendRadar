@@ -16,8 +16,8 @@ from urllib.parse import urlparse, parse_qs
 import webbrowser
 
 # 配置
-PORT = 8080
-HOST = "localhost"
+PORT = int(os.environ.get("PORT", 8080))
+HOST = os.environ.get("HOST", "0.0.0.0")  # 0.0.0.0 允许 Docker 容器接受外部连接
 OUTPUT_DIR = Path("output")
 
 
@@ -172,27 +172,22 @@ class TrendRadarAPIHandler(BaseHTTPRequestHandler):
 
         try:
             cursor.execute("""
-                SELECT source_id, source_name, title, url, mobile_url,
-                       ranks, crawl_time, crawl_date
+                SELECT platform_id, title, rank, url, mobile_url,
+                       first_crawl_time, last_crawl_time
                 FROM news_items
-                ORDER BY crawl_time DESC
+                ORDER BY last_crawl_time DESC
             """)
 
             news_list = []
             for row in cursor.fetchall():
-                # 解析 ranks JSON
-                ranks = json.loads(row['ranks']) if row['ranks'] else []
-                min_rank = min(ranks) if ranks else 999
-
                 news_list.append({
                     "title": row['title'],
-                    "source": row['source_name'],
-                    "sourceId": row['source_id'],
-                    "rank": min_rank,
-                    "ranks": ranks,
+                    "source": row['platform_id'],
+                    "sourceId": row['platform_id'],
+                    "rank": row['rank'],
                     "url": row['url'],
                     "mobileUrl": row['mobile_url'],
-                    "time": row['crawl_time']
+                    "time": row['last_crawl_time']
                 })
 
             return news_list

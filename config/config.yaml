@@ -87,12 +87,12 @@ rss:
 
     - id: "reuters-world"
       name: "Reuters World News"
-      url: "https://rsshub.app/reuters/world"
+      url: "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best"
       max_age_days: 1
 
     - id: "ft-markets"
       name: "Financial Times Markets"
-      url: "https://rsshub.app/ft/markets"
+      url: "https://www.ft.com/markets?format=rss"
       max_age_days: 1
 
     - id: "cnbc"
@@ -112,7 +112,7 @@ rss:
 
     - id: "barrons"
       name: "Barron's"
-      url: "https://rsshub.app/barrons/market"
+      url: "https://feeds.a.dj.com/rss/RSSOpinion.xml"
       max_age_days: 1
 
     # 科技股重点关注
