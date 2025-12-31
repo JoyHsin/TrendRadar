@@ -87,8 +87,9 @@ rss:
 
     - id: "reuters-world"
       name: "Reuters World News"
-      url: "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best"
+      url: "https://feeds.reuters.com/reuters/businessNews"
       max_age_days: 1
+      enabled: false  # 暂时禁用：官方 RSS 源存在 SSL 连接问题
 
     - id: "ft-markets"
       name: "Financial Times Markets"
@@ -191,11 +192,13 @@ rss:
       name: "华尔街见闻"
       url: "https://rsshub.app/wallstreetcn/news/global"
       max_age_days: 1
+      enabled: false  # 暂时禁用：RSSHub 公共实例返回 403 错误
 
     - id: "36kr"
       name: "36氪"
       url: "https://rsshub.app/36kr/news/latest"
       max_age_days: 1
+      enabled: false  # 暂时禁用：RSSHub 公共实例返回 403 错误
 
 
 # ===============================================================
